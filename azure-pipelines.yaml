@@ -1,46 +1,32 @@
-trigger:
-- master
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
 
-pool:
-  vmImage: 'ubuntu-latest'
+trigger: none
+
+
+pool: default
+
 
 steps:
+- checkout: self
+  persistCredentials: true
 
-- task: sfpwowerscript-installsfdx-task@6
+- script: |
+    echo "Build Type: $(BUILD_TYPE)"
+  displayName: 'Confirming Variables'
+
+- task: CmdLine@2
   inputs:
-    isTelemetryEnabled: true
+    script:
+      sfdx sfpowerkit:auth:login -u=$(sfTargetOrgUserName) -p=$(sfTargetOrgPassword) -s=$(sfTargetOrgSecurityToken) -r https://test.salesforce.com  
+  displayName: authentication to org
 
-- task: sfpwowerscript-authenticateorg-task@8
+- task: CmdLine@2
   inputs:
-    method: 'Credentials'
-    username: '$(SalesforceUsername)'
-    password: '$(SalesforcePassword)'
-    securitytoken: '$(SalesforceSecurityToken)'
-    alias: 'AzureDevOpsScratchOrg'
-    isdevhub: true
-    isTelemetryEnabled: true
-
-- task: sfpowerscript-deploysourcetoorg-task@7
-  inputs:
-    target_org: 'AzureDevOpsScratchOrg'
-    project_directory: './'
-    source_directory: 'force-app'
-    checkonly: false
-    wait_time: '20'
-    testlevel: 'NoTestRun'
-    isToBreakBuildIfEmpty: true
-    isTelemetryEnabled: true
-
-- task: sfpwowerscript-triggerapextest-task@6
-  inputs:
-    target_org: 'AzureDevOpsScratchOrg'
-    testlevel: 'RunAllTestsInOrg'
-    wait_time: '60'
-    isTelemetryEnabled: true
-
-
-- task: sfpwowerscript-validateapextestcoverage-task@3
-  inputs:
-    target_org: 'AzureDevOpsScratchOrg'
-    test_coverage: '75'
-    isTelemetryEnabled: true
+    script:
+     #sfdx force:source:deploy -u=$(sf.usernameTarget) -x unpackaged/package.xml
+     echo "Build Type in Deploy to Target: $(BUILD_TYPE)"
+  displayName: Deploy to Target Org
+  condition:  or(eq(variables['BUILD_TYPE'], 'deploy'),eq(variables['BUILD_TYPE'], 'both'))
