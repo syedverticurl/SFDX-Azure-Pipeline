@@ -1,3 +1,4 @@
+
 # Starter pipeline
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
@@ -6,7 +7,7 @@
 trigger: none
 
 
-pool: default
+pool: Syed_Pool
 
 
 steps:
@@ -20,13 +21,15 @@ steps:
 - task: CmdLine@2
   inputs:
     script:
-      sfdx sfpowerkit:auth:login -u=$(sfTargetOrgUserName) -p=$(sfTargetOrgPassword) -s=$(sfTargetOrgSecurityToken) -r https://test.salesforce.com  
+      sfdx sfpowerkit:auth:login -u=$(sfTargetOrgUserName) -p=$(sfTargetOrgPassword) -s=$(sfTargetOrgSecurityToken) -r https://login.salesforce.com  
   displayName: authentication to org
-
+   
 - task: CmdLine@2
-  inputs:
-    script:
-     #sfdx force:source:deploy -u=$(sf.usernameTarget) -x unpackaged/package.xml
-     echo "Build Type in Deploy to Target: $(BUILD_TYPE)"
-  displayName: Deploy to Target Org
-  condition:  or(eq(variables['BUILD_TYPE'], 'deploy'),eq(variables['BUILD_TYPE'], 'both'))
+  inputs: 
+    script: "sfdx force:source:convert -r ./force-app -d ./toDeploy"
+  displayName: Convert to deploy source
+    
+- task: CmdLine@2
+  inputs: 
+    script: "sfdx force:mdapi:deploy -l RunSpecifiedTests -r apexMasterTest -c -d ./toDeploy -u $(sfTargetOrgUserName) -w 10"
+  displayName: Run validation on source code
