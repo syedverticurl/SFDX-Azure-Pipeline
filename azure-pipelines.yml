@@ -1,18 +1,35 @@
+
 # Starter pipeline
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger:
-- master
+trigger: none
+
 
 pool: Syed_Pool
 
+
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+- checkout: self
+  persistCredentials: true
 
 - script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+    echo "Build Type: $(BUILD_TYPE)"
+  displayName: 'Confirming Variables'
+
+- task: CmdLine@2
+  inputs:
+    script:
+      sfdx sfpowerkit:auth:login -u=$(sfTargetOrgUserName) -p=$(sfTargetOrgPassword) -s=$(sfTargetOrgSecurityToken) -r https://login.salesforce.com  
+  displayName: authentication to org
+   
+- task: CmdLine@2
+  inputs: 
+    script: "sfdx force:source:convert -r ./force-app -d ./toDeploy"
+  displayName: Convert to deploy source
+    
+- task: CmdLine@2
+  inputs: 
+    script: "sfdx force:mdapi:deploy -l RunSpecifiedTests -r apexMasterTest -c -d ./toDeploy -u $(sfTargetOrgUserName) -w 10"
+  displayName: Run validation on source code
