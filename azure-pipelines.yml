@@ -21,7 +21,7 @@ steps:
 - task: CmdLine@2
   inputs:
     script:
-      sfdx sfpowerkit:auth:login -u=$(sfTargetOrgUserName) -p=$(sfTargetOrgPassword) -s=$(sfTargetOrgSecurityToken) -r https://login.salesforce.com  
+      sfdx sfpowerkit:auth:login -u=$(sfTargetOrgUserName) -p=$(sfTargetOrgPassword) -s=$(sfTargetOrgSecurityToken) -r https://test.salesforce.com  
   displayName: authentication to org
    
 - task: CmdLine@2
