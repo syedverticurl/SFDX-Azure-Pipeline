@@ -9,7 +9,7 @@ export default class HelloWorld extends LightningElement {
         if (data) {
             this.valueToDisplay = data;
         } else if (error) {
-            this.valueToDisplay = "Awesome. This is the LWC component.";
+            this.valueToDisplay = "Awesome. This is the LWC component again.";
         }
     }
 
