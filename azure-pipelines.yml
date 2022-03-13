@@ -31,5 +31,5 @@ steps:
     
 - task: CmdLine@2
   inputs: 
-    script: "sfdx force:mdapi:deploy -l RunSpecifiedTests -r $(cat ApexTest.txt) -c -d ./toDeploy -u $(sfTargetOrgUserName) -w 10"
+    script: "sfdx force:mdapi:deploy -l RunSpecifiedTests -r $("'cat ApexTest.txt'") -c -d ./toDeploy -u $(sfTargetOrgUserName) -w 10"
   displayName: Run validation on source code
