@@ -1,3 +1,10 @@
+/**
+ * @description       : Test class
+ * @author            : Syed
+ * @group             : 
+ * @last modified on  : 03-13-2022
+ * @last modified by  : Syed
+**/
 @istest 
 public with sharing class apexMasterTest {
 
@@ -5,6 +12,6 @@ public with sharing class apexMasterTest {
     static void apexMasterTest() {
 
         apexMaster test = new apexMaster();
-        System.assertEquals( apexMaster.getHelloWorld() , 'Hello world, Azure DevOps is in the house!' );
+        System.assertEquals( apexMaster.getHelloWorld() , 'Hello world again, Azure DevOps LWC text being returned from apex' );
     }
 }
